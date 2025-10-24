@@ -6,6 +6,10 @@ export const signUp = async (req, res) => {
   const { email, fullName, password } = req.body;
 
   try {
+    if (!email || !fullName || !password) {
+      return res.status(400).json({ message: "All Fields Are Required" });
+    }
+
     // validate password
     if (password.length < 6) {
       return res
@@ -20,8 +24,8 @@ export const signUp = async (req, res) => {
     }
 
     // hash the user password before save to the database
-    const salt = bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // now save to the database
     const newUser = new User({
