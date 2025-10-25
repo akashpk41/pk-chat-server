@@ -21,6 +21,7 @@ export const getMessages = async (req, res) => {
     const { id: userToChatId } = req.params;
     const myId = req.user._id;
 
+
     //     get the all messages  and filter by user
     const message = await Message.find({
       $or: [
@@ -28,6 +29,7 @@ export const getMessages = async (req, res) => {
         { senderId: userToChatId, receiverId: myId },
       ],
     });
+  // console.log(userToChatId)
 
     res.status(200).json(message);
   } catch (err) {
