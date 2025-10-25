@@ -38,7 +38,7 @@ export const signUp = async (req, res) => {
       generateToken(newUser._id, res);
       await newUser.save();
 
-      res.status(201).json({
+      res.status(200).json({
         message: "Registration Successfully!",
         _id: newUser._id,
         fullName: newUser.fullName,
@@ -55,9 +55,50 @@ export const signUp = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  res.send("Login");
+  const { email, password } = req.body;
+
+  try {
+    if (!email || !password) {
+      return res.status(400).json({ message: "All Fields Are Required" });
+    }
+
+    // check is the user existence
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid Credential" });
+    }
+    // check the correct password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(400).json({ message: "Invalid Credential" });
+    }
+
+    // update lastLogin timestamp
+    user.lastLogin = new Date();
+    await user.save();
+
+    // jwt token
+    generateToken(user._id, res);
+    res.status(200).json({
+      message: "Login Successfully!",
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePic: user.profilePic,
+      lastLogin: user.lastLogin
+    });
+  } catch (err) {
+    console.log("error in Login Controller", err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export const logOut = async (req, res) => {
-  res.send("Log OUt");
+  try {
+    res.cookie("jwt", "", { maxAge: 0 });
+    res.status(200).json({ message: "Logout Successfully!" });
+  } catch (err) {
+    console.log("error in Logout Controller", err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
