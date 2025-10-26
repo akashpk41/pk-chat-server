@@ -1,3 +1,5 @@
+import { v2 as cloudinary } from "cloudinary";
+
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 
@@ -21,7 +23,6 @@ export const getMessages = async (req, res) => {
     const { id: userToChatId } = req.params;
     const myId = req.user._id;
 
-
     //     get the all messages  and filter by user
     const message = await Message.find({
       $or: [
@@ -29,7 +30,7 @@ export const getMessages = async (req, res) => {
         { senderId: userToChatId, receiverId: myId },
       ],
     });
-  // console.log(userToChatId)
+    // console.log(userToChatId)
 
     res.status(200).json(message);
   } catch (err) {
