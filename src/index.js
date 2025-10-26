@@ -14,7 +14,7 @@ dotenv.config({ quiet: true });
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: ["http://localhost:5173", process.env.FRONTEND_URL],
     credentials: true,
   })
 );
@@ -29,11 +29,12 @@ const PORT = process.env.PORT || 3000;
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-app.get('/',(req,res)=>{
-  res.send('PK On Fire🔥')
-})
+app.get("/", (req, res) => {
+  res.send("PK On Fire🔥");
+});
 
 server.listen(PORT, () => {
   console.log(`Server Is Running On Port: ${PORT}🔥`);
+  
   connectDB();
 });
