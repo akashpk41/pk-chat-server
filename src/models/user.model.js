@@ -21,9 +21,9 @@ const UserSchema = new Schema(
       type: String,
       default: "",
     },
-    lastLogin: {
+    lastSeen: {
       type: Date,
-      default: null,
+      default: Date.now,
     },
   },
   { timestamps: true }

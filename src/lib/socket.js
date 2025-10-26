@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import express from "express";
 import http from "http";
 import dotenv from "dotenv";
+import User from "../models/user.model.js";
 dotenv.config();
 
 const app = express();
@@ -29,8 +30,20 @@ io.on("connection", (socket) => {
   //  send events to all the connected users;
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  socket.on("disconnect", () => {
+
+
+  socket.on("disconnect", async () => {
     // console.log(`A User Disconnected`, socket.id);
+
+    // add last seen to the user
+    try {
+      await User.findByIdAndUpdate(userId, {
+        lastSeen: new Date(),
+      });
+    } catch (error) {
+      console.error("Error updating lastSeen:", error);
+    }
+
     delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
