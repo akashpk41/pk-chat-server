@@ -3,6 +3,7 @@ import express from "express";
 import http from "http";
 import dotenv from "dotenv";
 import User from "../models/user.model.js";
+
 dotenv.config();
 
 const app = express();
@@ -22,19 +23,32 @@ export function getReceiverSocketId(userId) {
 // store online users
 const userSocketMap = {};
 
+// store typing status
+const typingUsers = {};
+
 io.on("connection", (socket) => {
-  // console.log(`A User Connected`, socket.id);
   const userId = socket.handshake.query.userId;
   if (userId) userSocketMap[userId] = socket.id;
 
-  //  send events to all the connected users;
+  // send events to all the connected users
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
+  // Handle typing events
+  socket.on("typing", ({ senderId, receiverId }) => {
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("userTyping", { userId: senderId });
+    }
+  });
 
+  socket.on("stopTyping", ({ senderId, receiverId }) => {
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("userStopTyping", { userId: senderId });
+    }
+  });
 
   socket.on("disconnect", async () => {
-    // console.log(`A User Disconnected`, socket.id);
-
     // add last seen to the user
     try {
       await User.findByIdAndUpdate(userId, {
@@ -45,6 +59,7 @@ io.on("connection", (socket) => {
     }
 
     delete userSocketMap[userId];
+    delete typingUsers[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
