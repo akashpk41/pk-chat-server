@@ -122,6 +122,9 @@ io.on("connection", (socket) => {
       await User.findByIdAndUpdate(userId, {
         lastSeen: new Date(),
       });
+
+// re deploying
+
     } catch (error) {
       console.error("Error updating lastSeen:", error);
     }
