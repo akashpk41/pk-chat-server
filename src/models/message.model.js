@@ -12,12 +12,18 @@ const messageSchema = new Schema(
       ref: "User",
       required: true,
     },
-
     text: {
       type: String,
     },
     image: {
       type: String,
+    },
+    seen: {
+      type: Boolean,
+      default: false,
+    },
+    seenAt: {
+      type: Date,
     },
   },
   { timestamps: true }
