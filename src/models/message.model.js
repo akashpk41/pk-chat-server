@@ -25,6 +25,16 @@ const messageSchema = new Schema(
     seenAt: {
       type: Date,
     },
+    edited: {
+      type: Boolean,
+      default: false,
+    },
+    editedAt: {
+      type: Date,
+    },
+    deletedBy: {
+  type: String,
+},
   },
   { timestamps: true }
 );
