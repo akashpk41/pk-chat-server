@@ -77,6 +77,15 @@ All routes, controllers, and models are modularly structured for scalability and
 
 ---
 
+## 🤖 AI Involvement (Project Notes)
+
+> During the final stages of this project, I experimented with **Claude AI** to refine certain features and enhance parts of the design.
+> However, while working with AI tools, I encountered several challenges — including inaccurate outputs and moments when I couldn’t fully grasp some implementations.
+> In those cases, I revisited the results, explored the logic in depth, and learned from the AI explanations before applying them manually.
+> This process not only improved the project’s overall quality but also deepened my understanding of **AI-assisted development** and practical backend design. 💡
+
+---
+
 ## 📸 Preview / Screenshot Section
 
 | Login Page                                                    | Main Chat Interface                                                            |
@@ -98,3 +107,17 @@ All routes, controllers, and models are modularly structured for scalability and
 
 > ❤️ Crafted with Node.js, Express, and a deep love for scalable architecture.
 
+---
+
+## 📜 License
+
+This project is licensed under the **ISC License** — feel free to use and modify with proper credit.
+
+---
+
+## ⭐ Support
+
+If you find this project helpful, please consider giving it a **star** 🌟 on [GitHub](https://github.com/akashpk41/pk-chat-server).
+Your support motivates me to keep improving and building better open-source tools.
+
+---
