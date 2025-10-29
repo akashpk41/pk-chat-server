@@ -110,8 +110,7 @@ export const updateProfile = async (req, res) => {
     const userId = req.user._id;
 
     if (!profilePic) {
-      res.status(400).json({ message: "Profile Pic is Required!" });
-      return;
+      return res.status(400).json({ message: "Profile Pic is Required!" });
     }
 
     const uploadResponse = await cloudinary.uploader.upload(profilePic);
@@ -123,12 +122,10 @@ export const updateProfile = async (req, res) => {
         profilePic: uploadResponse.secure_url,
       },
       { new: true }
-    );
+    ).select("-password"); // Don't send password
 
-    res.status(200).json({
-      message: "Profile picture updated successfully!",
-      updatedUser,
-    });
+    // JUST RETURN THE USER OBJECT DIRECTLY
+    res.status(200).json(updatedUser);
   } catch (err) {
     console.log("error in Update Profile Controller", err.message);
     res.status(500).json({ message: "Internal Server Error" });

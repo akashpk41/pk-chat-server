@@ -50,8 +50,6 @@ io.on("connection", (socket) => {
 
   // Handle message seen events
   socket.on("messageSeen", async ({ senderId, receiverId, messageIds }) => {
-    console.log("🔔 Received messageSeen event:", { senderId, receiverId, messageIds });
-
     try {
       // Update messages in database
       const result = await import("../models/message.model.js").then(({ default: Message }) => {
@@ -68,20 +66,14 @@ io.on("connection", (socket) => {
         );
       });
 
-      console.log("✅ Database updated:", result.modifiedCount, "messages");
-
       // Notify sender
       const senderSocketId = getReceiverSocketId(senderId);
-      console.log("📤 Sending to sender:", senderId, "socketId:", senderSocketId);
 
       if (senderSocketId) {
         io.to(senderSocketId).emit("messageSeenUpdate", {
           userId: receiverId,
           messageIds
         });
-        console.log("✅ messageSeenUpdate emitted to sender");
-      } else {
-        console.log("⚠️ Sender not online");
       }
     } catch (error) {
       console.error("❌ Error marking messages as seen:", error);
@@ -90,9 +82,11 @@ io.on("connection", (socket) => {
 
   // Handle chat opened (mark all messages as seen)
   socket.on("chatOpened", async ({ userId, otherUserId }) => {
+    // console.log("👁️ Chat opened by:", userId, "with:", otherUserId);
+
     try {
       // Mark all messages from otherUser to userId as seen
-      await import("../models/message.model.js").then(({ default: Message }) => {
+      const result = await import("../models/message.model.js").then(({ default: Message }) => {
         return Message.updateMany(
           {
             senderId: otherUserId,
@@ -106,13 +100,20 @@ io.on("connection", (socket) => {
         );
       });
 
+      // console.log("✅ Database updated:", result.modifiedCount, "messages marked as seen");
+
       // Notify the other user
       const otherUserSocketId = getReceiverSocketId(otherUserId);
+      // console.log("📤 Notifying:", otherUserId, "socketId:", otherUserSocketId);
+
       if (otherUserSocketId) {
         io.to(otherUserSocketId).emit("chatOpenedBy", { userId });
+        // console.log("✅ chatOpenedBy emitted");
+      } else {
+        // console.log("⚠️ Other user not online");
       }
     } catch (error) {
-      console.error("Error in chat opened:", error);
+      console.error("❌ Error in chat opened:", error);
     }
   });
 
@@ -122,9 +123,6 @@ io.on("connection", (socket) => {
       await User.findByIdAndUpdate(userId, {
         lastSeen: new Date(),
       });
-
-// re deploying
-
     } catch (error) {
       console.error("Error updating lastSeen:", error);
     }
