@@ -106,18 +106,4 @@ All routes, controllers, and models are modularly structured for scalability and
 📘 **Facebook:** [facebook.com/atapk41](https://facebook.com/atapk41/)
 
 > ❤️ Crafted with Node.js, Express, and a deep love for scalable architecture.
-
----
-
-## 📜 License
-
-This project is licensed under the **ISC License** — feel free to use and modify with proper credit.
-
----
-
-## ⭐ Support
-
-If you find this project helpful, please consider giving it a **star** 🌟 on [GitHub](https://github.com/akashpk41/pk-chat-server).
-Your support motivates me to keep improving and building better open-source tools.
-
 ---
