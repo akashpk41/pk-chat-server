@@ -33,8 +33,8 @@ const messageSchema = new Schema(
       type: Date,
     },
     deletedBy: {
-  type: String,
-},
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
-import User from "../models/user.model.js";
-import { generateToken } from "../lib/generateToken.js";
 import cloudinary from "../lib/cloudinary.js";
+import { generateToken } from "../lib/generateToken.js";
+import User from "../models/user.model.js";
 
 export const signUp = async (req, res) => {
   const { email, fullName, password } = req.body;
@@ -94,14 +94,13 @@ export const login = async (req, res) => {
   }
 };
 
-
 export const logOut = async (req, res) => {
   try {
     res.clearCookie("jwt", {
       httpOnly: true,
       sameSite: "none",
       secure: true,
-      path: "/"
+      path: "/",
     });
 
     res.status(200).json({ message: "Logout Successfully!" });
