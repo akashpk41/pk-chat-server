@@ -1,8 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 
+import { getReceiverSocketId, io } from "../lib/socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
-import { getReceiverSocketId, io } from "../lib/socket.js";
 
 export const getUserForSideBar = async (req, res) => {
   try {
@@ -76,7 +76,6 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-
 // Edit Message Controller
 export const editMessage = async (req, res) => {
   try {
@@ -93,7 +92,9 @@ export const editMessage = async (req, res) => {
 
     // Check if the user is the sender of the message
     if (message.senderId.toString() !== userId.toString()) {
-      return res.status(403).json({ message: "You can only edit your own messages" });
+      return res
+        .status(403)
+        .json({ message: "You can only edit your own messages" });
     }
 
     // Update the message
@@ -116,7 +117,6 @@ export const editMessage = async (req, res) => {
   }
 };
 
-
 export const deleteMessage = async (req, res) => {
   try {
     const { id: messageId } = req.params;
@@ -129,7 +129,9 @@ export const deleteMessage = async (req, res) => {
     }
 
     if (message.senderId.toString() !== userId.toString()) {
-      return res.status(403).json({ message: "You can only delete your own messages" });
+      return res
+        .status(403)
+        .json({ message: "You can only delete your own messages" });
     }
 
     // ✅ Get user info for deleted message text
@@ -145,7 +147,7 @@ export const deleteMessage = async (req, res) => {
       }
     }
 
-    // ✅ Mark as deleted instead of removing from database (Facebook style)
+    //  Mark as deleted instead of removing from database
     message.deleted = true;
     message.deletedBy = user.fullName;
     message.text = `${user.fullName} deleted this message`;
