@@ -1,7 +1,7 @@
-import { Server } from "socket.io";
+import dotenv from "dotenv";
 import express from "express";
 import http from "http";
-import dotenv from "dotenv";
+import { Server } from "socket.io";
 import User from "../models/user.model.js";
 
 dotenv.config();
@@ -52,19 +52,21 @@ io.on("connection", (socket) => {
   socket.on("messageSeen", async ({ senderId, receiverId, messageIds }) => {
     try {
       // Update messages in database
-      const result = await import("../models/message.model.js").then(({ default: Message }) => {
-        return Message.updateMany(
-          {
-            _id: { $in: messageIds },
-            receiverId: receiverId,
-            seen: false
-          },
-          {
-            seen: true,
-            seenAt: new Date()
-          }
-        );
-      });
+      const result = await import("../models/message.model.js").then(
+        ({ default: Message }) => {
+          return Message.updateMany(
+            {
+              _id: { $in: messageIds },
+              receiverId: receiverId,
+              seen: false,
+            },
+            {
+              seen: true,
+              seenAt: new Date(),
+            }
+          );
+        }
+      );
 
       // Notify sender
       const senderSocketId = getReceiverSocketId(senderId);
@@ -72,7 +74,7 @@ io.on("connection", (socket) => {
       if (senderSocketId) {
         io.to(senderSocketId).emit("messageSeenUpdate", {
           userId: receiverId,
-          messageIds
+          messageIds,
         });
       }
     } catch (error) {
@@ -82,38 +84,33 @@ io.on("connection", (socket) => {
 
   // Handle chat opened (mark all messages as seen)
   socket.on("chatOpened", async ({ userId, otherUserId }) => {
-    // console.log("👁️ Chat opened by:", userId, "with:", otherUserId);
-
     try {
       // Mark all messages from otherUser to userId as seen
-      const result = await import("../models/message.model.js").then(({ default: Message }) => {
-        return Message.updateMany(
-          {
-            senderId: otherUserId,
-            receiverId: userId,
-            seen: false
-          },
-          {
-            seen: true,
-            seenAt: new Date()
-          }
-        );
-      });
-
-      // console.log("✅ Database updated:", result.modifiedCount, "messages marked as seen");
+      const result = await import("../models/message.model.js").then(
+        ({ default: Message }) => {
+          return Message.updateMany(
+            {
+              senderId: otherUserId,
+              receiverId: userId,
+              seen: false,
+            },
+            {
+              seen: true,
+              seenAt: new Date(),
+            }
+          );
+        }
+      );
 
       // Notify the other user
       const otherUserSocketId = getReceiverSocketId(otherUserId);
-      // console.log("📤 Notifying:", otherUserId, "socketId:", otherUserSocketId);
 
       if (otherUserSocketId) {
         io.to(otherUserSocketId).emit("chatOpenedBy", { userId });
-        // console.log("✅ chatOpenedBy emitted");
       } else {
-        // console.log("⚠️ Other user not online");
       }
     } catch (error) {
-      console.error("❌ Error in chat opened:", error);
+      console.error(" Error in chat opened:", error);
     }
   });
 
@@ -133,4 +130,4 @@ io.on("connection", (socket) => {
   });
 });
 
-export { io, app, server };
+export { app, io, server };
